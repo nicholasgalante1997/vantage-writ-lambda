@@ -5,7 +5,6 @@
   "main": "lib/api/index.js",
   "scripts": {
     "test": "jest",
-    "build": "tsc",
     "lint": "eslint . -c",
     "lint-patch": "eslint . -c --fix"
   },
