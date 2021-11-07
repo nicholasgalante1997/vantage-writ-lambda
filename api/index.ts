@@ -1,4 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
+import moment from 'moment';
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from 'firebase/database';
 import config from '../utils/firebase';
@@ -8,7 +9,7 @@ export default (request: VercelRequest, response: VercelResponse) => {
   // instance of local util logger
   const logger: VantLog = new VantLog();
   // Logging request
-  logger.info(`Receieved request from ${request.headers.location}`)
+  logger.info(`Receieved request at ${moment().toISOString()}`)
   logger.info('Attempting to handle request.');
 
   // create resources for firebase
@@ -16,9 +17,11 @@ export default (request: VercelRequest, response: VercelResponse) => {
   const database = getDatabase(app);
   let firebaseResponse: any;
 
+  logger.info(`database is ${database.type}`);
+
   //begin firebase request
   const rtdbPathReference = ref(database, 'lambda');
-  const close = onValue(rtdbPathReference, (snapshot) => {
+  onValue(rtdbPathReference, (snapshot) => {
     const data = snapshot.val();
     logger.info('data: ' + data);
     firebaseResponse = data;
@@ -30,5 +33,4 @@ export default (request: VercelRequest, response: VercelResponse) => {
 
   // Close out request;
   logger.info(`Request with an origin of ${request.headers.location} handled successfully.`);
-  close();
 };
