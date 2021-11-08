@@ -1,3 +1,7 @@
+// load environment variables
+require('dotenv').config();
+
+// import dependencies
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import moment from 'moment';
 import { initializeApp } from "firebase/app";
