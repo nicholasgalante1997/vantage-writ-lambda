@@ -1,11 +1,11 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import moment from 'moment';
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, onValue } from 'firebase/database';
+import { getDatabase, ref, child, get } from 'firebase/database';
 import config from '../utils/firebase';
 import VantLog from '../utils/vant-logger';
 
-export default (request: VercelRequest, response: VercelResponse) => {
+export default async (request: VercelRequest, response: VercelResponse) => {
   // instance of local util logger
   const logger: VantLog = new VantLog();
   // Logging request
@@ -15,18 +15,24 @@ export default (request: VercelRequest, response: VercelResponse) => {
   // create resources for firebase
   const app = initializeApp(config);
   const database = getDatabase(app);
+  const dbRef = ref(database);
 
   logger.info(`database is ${database.type}`);
 
   //begin firebase request
-  const rtdbPathReference = ref(database, 'lambda');
-  return onValue(rtdbPathReference, (snapshot) => {
-    const data = snapshot.val();
-    logger.info('data: ' + data);
-    response.status(200);
-    response.setHeader('Content-Type', 'text/html');
-    response.send(`<em style="color:cyan;font-size:1rem;">lambda responded with ${data} </em>`);
-    logger.info(`Request with an origin of ${request.headers.location} handled successfully.`);
-  });
-  // Close out request;
+  try {
+      const snapshot = await get(child(dbRef, 'lambda'));
+      if (snapshot.exists()) {
+          logger.info('data: ' + snapshot.val());
+            response.status(200);
+            response.setHeader('Content-Type', 'text/html');
+            response.send(`<em style="color:cyan;font-size:1rem;">lambda responded with ${snapshot.val()} </em>`);
+          logger.info(`Request with an origin of ${moment().toISOString()} handled successfully.`);
+        } else {
+            logger.error('Lambda did not respond with data or error. Check firebase console.');
+        }
+  } catch (e: any) {
+      logger.error(JSON.stringify(e));
+  }
+
 };
