@@ -8,7 +8,7 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, child, get } from 'firebase/database';
 
 // local dependencies
-import { setHeaders } from '../../utils/http/headers';
+import { enableCORS, setHeaders } from '../../utils/http/headers';
 import config from '../../utils/firebase';
 import VantLog from '../../utils/vant-logger';
 
@@ -32,6 +32,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 		if (snapshot.exists()) {
 			logger.info('data: ' + snapshot.val());
             response = setHeaders(response);
+            response = enableCORS(response);
 			response.json({ collections: `${snapshot.val()}`});
 			logger.info(`Request handled successfully.`);
 		} else {
