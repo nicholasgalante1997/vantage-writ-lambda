@@ -11,16 +11,16 @@ enum Level {
 }
 
 export default class VantLogger {
-    info(message: String): void { 
-        console.log(`${moment().format()}[${Level.INFO}]::${message}`);
-    };
-    warn(message: String): void { 
-        console.log(`${moment().format()}[${Level.WARN}]::${message}`);
-    };
-    error(message: String): void { 
-        console.log(`${moment().format()}[${Level.ERROR}]::${message}`);
-    };
-    debug(message: String): void { 
-        console.log(`${moment().format()}[${Level.DEBUG}]::${message}`);
-    };
+	info(message: string): void { 
+		console.log(`${moment().format()}[${Level.INFO}]::${message}`);
+	}
+	warn(message: string): void { 
+		console.log(`${moment().format()}[${Level.WARN}]::${message}`);
+	}
+	error(message: string): void { 
+		console.log(`${moment().format()}[${Level.ERROR}]::${message}`);
+	}
+	debug(message: string): void { 
+		console.log(`${moment().format()}[${Level.DEBUG}]::${message}`);
+	}
 }
