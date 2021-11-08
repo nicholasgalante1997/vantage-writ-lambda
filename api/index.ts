@@ -6,6 +6,9 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import moment from 'moment';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, child, get } from 'firebase/database';
+
+// local dependencies
+import { setHeaders } from '../utils/http/headers';
 import config from '../utils/firebase';
 import VantLog from '../utils/vant-logger';
 
@@ -28,15 +31,16 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 		const snapshot = await get(child(dbRef, 'lambda'));
 		if (snapshot.exists()) {
 			logger.info('data: ' + snapshot.val());
-			response.status(200);
-			response.setHeader('Content-Type', 'text/html');
+      response = setHeaders(response);
 			response.send(`<em style="color:cyan;font-size:1rem;">lambda responded with ${snapshot.val()} </em>`);
-			logger.info(`Request with an origin of ${moment().toISOString()} handled successfully.`);
+			logger.info(`Request handled successfully.`);
 		} else {
 			logger.error('Lambda did not respond with data or error. Check firebase console.');
 		}
 	} catch (e: any) {
 		logger.error(JSON.stringify(e));
-	}
+	} finally {
+    logger.info('End of request.')
+  }
 
 };
