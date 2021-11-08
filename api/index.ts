@@ -32,7 +32,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 		if (snapshot.exists()) {
 			logger.info('data: ' + snapshot.val());
       response = setHeaders(response);
-			response.send(`<em style="color:cyan;font-size:1rem;">lambda responded with ${snapshot.val()} </em>`);
+			response.json({ lambda: `${snapshot.val()}`});
 			logger.info(`Request handled successfully.`);
 		} else {
 			logger.error('Lambda did not respond with data or error. Check firebase console.');
