@@ -15,22 +15,18 @@ export default (request: VercelRequest, response: VercelResponse) => {
   // create resources for firebase
   const app = initializeApp(config);
   const database = getDatabase(app);
-  let firebaseResponse: any;
 
   logger.info(`database is ${database.type}`);
 
   //begin firebase request
   const rtdbPathReference = ref(database, 'lambda');
-  onValue(rtdbPathReference, (snapshot) => {
+  return onValue(rtdbPathReference, (snapshot) => {
     const data = snapshot.val();
     logger.info('data: ' + data);
-    firebaseResponse = data;
+    response.status(200);
+    response.setHeader('Content-Type', 'text/html');
+    response.send(`<em style="color:cyan;font-size:1rem;">lambda responded with ${data} </em>`);
+    logger.info(`Request with an origin of ${request.headers.location} handled successfully.`);
   });
-
-  response.status(200);
-  response.setHeader('Content-Type', 'text/html');
-  response.send(`<em style="color:cyan;font-size:1rem;">lambda responded with ${firebaseResponse} </em>`);
-
   // Close out request;
-  logger.info(`Request with an origin of ${request.headers.location} handled successfully.`);
 };
