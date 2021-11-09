@@ -31,17 +31,17 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 		const snapshot = await get(child(dbRef, 'lambda'));
 		if (snapshot.exists()) {
 			logger.info('data: ' + snapshot.val());
-      response = setHeaders(response);
-      response = enableCORS(response);
+			response = setHeaders(response);
+			response = enableCORS(response);
 			response.json({ lambda: `${snapshot.val()}`});
-			logger.info(`Request handled successfully.`);
+			logger.info('Request handled successfully.');
 		} else {
 			logger.error('Lambda did not respond with data or error. Check firebase console.');
 		}
 	} catch (e: any) {
 		logger.error(JSON.stringify(e));
 	} finally {
-    logger.info('End of request.')
-  }
+		logger.info('End of request.');
+	}
 
 };
