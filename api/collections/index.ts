@@ -1,16 +1,14 @@
-// load environment variables
+/* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();
 
-// import dependencies
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import moment from 'moment';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, child, get } from 'firebase/database';
-
-// local dependencies
 import { enableCORS, setHeaders } from '../../utils/http/headers';
 import config from '../../utils/firebase';
 import VantLog from '../../utils/vant-logger';
+import { Collections } from '../../types';
 
 export default async (request: VercelRequest, response: VercelResponse) => {
 	// instance of local util logger
@@ -30,7 +28,6 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 	try {
 		const snapshot = await get(child(dbRef, 'collections'));
 		if (snapshot.exists()) {
-			logger.info('data: ' + JSON.stringify(snapshot.val()));
 			response = setHeaders(response);
 			response = enableCORS(response);
 			response.json({ collections: snapshot.val()});
